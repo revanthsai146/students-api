@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Student;
 import com.example.demo.service.StudentServiceImpl;
+
 @RestController
-@RequestMapping("/api/students")
+@RequestMapping("/api")
 public class StudentController {
 	private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
     @Autowired
@@ -34,7 +36,6 @@ public class StudentController {
         return ResponseEntity.ok(savedStudent);
     }
     
-    
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
     	logger.info("Getting all students");
@@ -43,7 +44,7 @@ public class StudentController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
+    public ResponseEntity<Student> getStudentById(@PathVariable int id) {
     	logger.info("Getting student with id: {}", id);
         Optional<Student> student = studentService.getStudentById(id);
         
@@ -53,12 +54,26 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         }
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Student> updateStudentById(@RequestBody Student updateStudent,@PathVariable int id) {
+    	logger.info("Getting student with id: {}", id);
+        Optional<Student> student = studentService.getStudentById(id);
+        if(student.isPresent()) {
+        	Student existStudent=student.get();
+        	existStudent.setDepartment(updateStudent.getDepartment());
+        	existStudent.setName(updateStudent.getName());
+        	studentService.save(existStudent);
+            return ResponseEntity.ok(existStudent);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudentById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteStudentById(@PathVariable int id) {
     	logger.info("Deleting student with id: {}", id);
         studentService.deleteStudentById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("deleted sucessfully");
     }
 }
 

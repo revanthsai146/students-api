@@ -36,7 +36,7 @@ public class StudentServiceImpl implements StudentInterface{
 
 
 	@Override
-	public Optional<Student> getStudentById(Long id) {
+	public Optional<Student> getStudentById(int id) {
 		// TODO Auto-generated method stub
 		return repo.findById(id);
 	}
@@ -44,7 +44,7 @@ public class StudentServiceImpl implements StudentInterface{
 
 
 	@Override
-	public void deleteStudentById(Long id) {
+	public void deleteStudentById(int id) {
 		repo.deleteById(id);
 		
 	}
